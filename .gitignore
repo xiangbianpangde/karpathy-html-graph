@@ -1,0 +1,21 @@
+# OS / editor
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
+
+# Build / temp
+*.log
+*.tmp
+*.bak
+
+# Don't ignore the deliverable
+!48h-learning-graph.html
+!cytoscape.min.js
+
+# Local env
+.env
+.env.local

@@ -1,0 +1,1029 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>48h 学习链路图谱 · AITutor V3.1</title>
+<style>
+:root {
+  /* Claude 风格:暖奶油底 + Anthropic 橙 + 暖棕层次 */
+  --bg: #faf9f5;          /* Claude 主背景奶油色 */
+  --paper: #ffffff;       /* 纯白面板 */
+  --ink: #1f1f1e;         /* Claude 深炭黑(微暖) */
+  --ink-soft: #6b6b66;    /* 暖灰(非冷蓝灰) */
+  --rule: #e8e3d7;        /* 暖沙色分隔 */
+  --rule-soft: #f3eee2;   /* 更浅奶油 */
+  --orange: #d97757;      /* Anthropic 橙(terracotta) */
+  --orange-soft: #e6a08b; /* 浅橙 */
+  --rust: #a8482b;        /* 深锈红 */
+  --tan: #c2a878;         /* 暖沙金 */
+  --bronze: #b08552;      /* 古铜 */
+  --gold: #a88865;        /* 哑金 */
+  --coffee: #3d2f24;      /* 深咖啡 */
+  --brown: #5a4a3e;       /* 暖棕 */
+  --plum: #9c7a9c;        /* 淡紫(辅助) */
+  --serif: "Source Serif Pro", "Noto Serif SC", Georgia, "Times New Roman", serif;
+  --sans:  "Inter", "PingFang SC", "Microsoft YaHei", system-ui, -apple-system, sans-serif;
+  --mono:  "JetBrains Mono", "SF Mono", Consolas, Menlo, monospace;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; background: var(--bg); color: var(--ink); font-family: var(--sans); font-size: 14px; }
+
+.masthead {
+  position: fixed; top: 0; left: 0; right: 0; height: 152px;
+  background: var(--paper); border-bottom: 1px solid var(--rule);
+  padding: 16px 28px 0; z-index: 10;
+}
+.masthead h1 {
+  font-family: var(--serif); font-weight: 600; font-size: 24px;
+  color: var(--ink); letter-spacing: 0.3px; margin-bottom: 4px;
+}
+.masthead .subtitle {
+  font-family: var(--serif); font-style: italic; font-size: 12.5px;
+  color: var(--ink-soft); margin-bottom: 12px;
+}
+.tabs { display: flex; gap: 2px; border-bottom: 1px solid var(--rule-soft); margin-bottom: 8px; }
+.tab {
+  font-family: var(--serif); font-size: 13.5px; padding: 7px 16px;
+  background: transparent; border: none; cursor: pointer; color: var(--ink-soft);
+  border-bottom: 2.5px solid transparent; transition: all 0.15s;
+}
+.tab:hover { color: var(--ink); }
+.tab.active { color: var(--ink); font-weight: 600; border-bottom-color: var(--orange); }
+.tab .core-mark { color: var(--orange); font-weight: 700; margin-right: 4px; font-size: 11px; }
+.meta-pills { display: flex; gap: 8px; flex-wrap: wrap; }
+.pill {
+  font-family: var(--mono); font-size: 10.5px; padding: 2.5px 9px;
+  background: var(--bg); border: 1px solid var(--rule); border-radius: 12px;
+  color: var(--ink-soft);
+}
+.pill .k { color: var(--orange); font-weight: 600; }
+
+.filter {
+  position: fixed; top: 152px; left: 0; width: 200px; bottom: 0;
+  background: var(--paper); border-right: 1px solid var(--rule);
+  padding: 14px 12px; overflow-y: auto;
+}
+.filter h3 {
+  font-family: var(--serif); font-size: 11px; text-transform: uppercase;
+  letter-spacing: 1.5px; color: var(--ink-soft); margin-bottom: 8px;
+  border-bottom: 1px solid var(--rule-soft); padding-bottom: 5px;
+}
+.filter-item {
+  display: flex; align-items: center; gap: 7px; padding: 3px 0;
+  font-size: 12.5px; cursor: pointer; user-select: none;
+}
+.filter-item input { accent-color: var(--orange); }
+.filter-item .swatch { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+.filter-legend { font-size: 11px; color: var(--ink-soft); line-height: 1.5; margin-top: 14px; }
+.filter-legend p { margin: 3px 0; }
+
+.canvas {
+  position: fixed; top: 152px; left: 200px; right: 0; bottom: 0;
+  background: var(--bg); overflow: hidden;
+}
+#cy { width: 100%; height: 100%; }
+
+.drawer {
+  position: fixed; top: 152px; right: 0; width: 360px; bottom: 0;
+  background: var(--paper); border-left: 1px solid var(--rule);
+  padding: 22px 20px; overflow-y: auto;
+  transform: translateX(100%); transition: transform 0.25s ease-out;
+  z-index: 5;
+}
+.drawer.open { transform: translateX(0); }
+.drawer .close {
+  position: absolute; top: 10px; right: 12px;
+  background: none; border: none; font-size: 20px; cursor: pointer;
+  color: var(--ink-soft); font-family: var(--serif);
+}
+.drawer .close:hover { color: var(--orange); }
+.drawer .kind-tag {
+  font-family: var(--mono); font-size: 9.5px; text-transform: uppercase;
+  letter-spacing: 1.3px; color: var(--ink-soft); margin-bottom: 6px;
+}
+.drawer h2 {
+  font-family: var(--serif); font-weight: 600; font-size: 19px;
+  color: var(--ink); margin-bottom: 5px; line-height: 1.25;
+}
+.drawer .role {
+  font-family: var(--serif); font-style: italic; font-size: 12.5px;
+  color: var(--ink-soft); margin-bottom: 14px;
+  padding-bottom: 12px; border-bottom: 1px solid var(--rule-soft);
+}
+.drawer .section-label {
+  font-family: var(--mono); font-size: 9.5px; text-transform: uppercase;
+  letter-spacing: 1.3px; color: var(--ink-soft); margin-top: 14px; margin-bottom: 5px;
+}
+.drawer p { font-size: 13px; line-height: 1.55; color: var(--ink); margin-bottom: 6px; }
+.drawer .quote {
+  font-family: var(--serif); font-style: italic; font-size: 12.5px;
+  color: var(--ink-soft); border-left: 3px solid var(--orange);
+  padding: 5px 10px; margin: 6px 0; background: var(--bg);
+}
+.drawer .ref {
+  font-family: var(--mono); font-size: 10.5px; color: var(--rust);
+  background: var(--rule-soft); padding: 4px 7px; border-radius: 3px;
+  display: inline-block; word-break: break-all; line-height: 1.4;
+}
+.drawer .tags { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 3px; }
+.drawer .tag {
+  font-family: var(--mono); font-size: 9.5px; padding: 2px 7px;
+  background: var(--bg); border: 1px solid var(--rule); border-radius: 10px;
+  color: var(--ink-soft);
+}
+.drawer .placeholder {
+  font-family: var(--serif); font-style: italic; color: var(--ink-soft);
+  font-size: 13px; text-align: center; padding: 40px 0;
+}
+
+.footer {
+  position: fixed; bottom: 0; right: 0; padding: 4px 10px;
+  font-family: var(--mono); font-size: 9.5px; color: var(--ink-soft);
+  background: var(--paper); border-top: 1px solid var(--rule-soft); border-left: 1px solid var(--rule-soft);
+  z-index: 4;
+}
+</style>
+</head>
+<body>
+
+<div class="masthead">
+  <h1>48 小时学习链路图谱</h1>
+  <div class="subtitle">AITutor V3.1 · 业务概念 → 设计方法 → 代码实现 三层映射</div>
+  <div class="tabs" id="tabs">
+    <button class="tab active" data-tab="t1">Tab 1 · 学习能力图谱</button>
+    <button class="tab" data-tab="t2"><span class="core-mark">⭐</span>Tab 2 · 设计方法图谱</button>
+    <button class="tab" data-tab="t3"><span class="core-mark">⭐⭐</span>Tab 3 · 概念→设计→代码</button>
+    <button class="tab" data-tab="t4">Tab 4 · 认知旅程</button>
+  </div>
+  <div class="meta-pills" id="metaPills"></div>
+</div>
+
+<div class="filter" id="filter">
+  <h3>类型筛选</h3>
+  <div id="filterList"></div>
+  <div class="filter-legend">
+    <p><b style="color:var(--brown)">━━━</b> 强依赖/顺序</p>
+    <p><b style="color:var(--ink-soft)">┄┄┄</b> 弱引用/反馈</p>
+    <p style="margin-top:6px;color:var(--orange)">点击节点 → 右侧详情</p>
+    <p style="color:var(--ink-soft)">滚轮缩放 · 拖动平移</p>
+  </div>
+</div>
+
+<div class="canvas">
+  <div id="cy"></div>
+</div>
+
+<div class="drawer" id="drawer">
+  <button class="close" onclick="closeDrawer()">×</button>
+  <div id="drawerContent">
+    <div class="placeholder">点击节点查看详情</div>
+  </div>
+</div>
+
+<div class="footer">48h-learning-graph.html · AITutor V3.1 · cytoscape 3.30.2</div>
+
+<script src="./cytoscape.min.js"></script>
+<script>
+/* ============================================================
+   数据：4 个 Tab
+   布局：思维导图(根中心+多方向分支)
+   ============================================================ */
+
+// ---------- Tab 1: 学习能力图谱 (L1) — 25 节点, 28 边 ----------
+const T1_NODES = [
+  { id:'l1_root', label:'48 小时冲刺学习', kind:'goal',
+    desc:'从"我要学知识"到 48h 后掌握 85% 概念的完整体验;由 5 阶段 × 多节课构成 46h 净教学循环。',
+    quote:'产品卖点文档,从 MCP 版消除 Claude Desktop 依赖。',
+    ref:'AI-enabled learning-v1.0\\docs\\plan\\design\\08-系统模拟运行\\48h-冲刺学习流程-场景文档.md:1-21' },
+
+  // 上方：启动期 + 教学准备期
+  { id:'l1_bootstrap', label:'客户端启动', kind:'subcap',
+    desc:'M-003 Facade 引导 4 形态(CLI/GUI/Web/SDK),生成 ~/.aitutor/config.yaml。',
+    ref:'48h-冲刺学习流程-场景文档.md:25-32' },
+  { id:'l1_ingest', label:'多源语料采集', kind:'subcap',
+    desc:'M-014 数据管线: PDF→MD (pdf2zh 20min) + 视频转写 (yt-dlp+whisper 10min) + 网页搜索 5min。',
+    ref:'ai-tutor\\doc\\48H-SIMULATION-v2.md:81-85' },
+  { id:'l1_kg', label:'知识图谱构建', kind:'subcap',
+    desc:'depth=full 模式: 概念识别 847 个 + 关系抽取 12 种 3200+ 三元组 + embedding 索引。',
+    ref:'48H-SIMULATION-v2.md:88-107' },
+  { id:'l1_m_kg', label:'T+45min · 图谱完成', kind:'metric',
+    desc:'T+45min 触发构建,~25min 总耗时;质量门禁通过,章节覆盖 94%,3 孤立概念自动修复。',
+    metric:'耗时 ≤ 25min · 覆盖 ≥ 94%' },
+
+  { id:'l1_coldstart', label:'冷启动摸底', kind:'subcap',
+    desc:'10 题分层采样(3+4+3 按抽象度),每题后追"你确定吗？"测自评校准,计时测反应时间。',
+    ref:'48H-SIMULATION-v2.md:113-133' },
+  { id:'l1_plan', label:'5 阶段学习计划', kind:'subcap',
+    desc:'基于摸底 + 拓扑排序未掌握概念 → 5 阶段切片 + 时间校准 + 20% 复习穿插。',
+    ref:'48H-SIMULATION-v2.md:135-151' },
+  { id:'l1_m_plan', label:'5 阶段 × 6 节课', kind:'metric',
+    desc:'向量(8h) + 多元微分(12h) + 重积分(14h) + 曲线/曲面积分(8h) + 级数(4h) = 46h。',
+    metric:'6 天 × 8h = 48h' },
+
+  // 右方：教学循环期 (核心)
+  { id:'l1_explain', label:'概念讲解', kind:'subcap',
+    desc:'LLM 实时讲解(类比+例子+推导),策略引擎 6 选 1: 拆解/费曼/苏格拉底/类比/项目/错题。',
+    ref:'48H-SIMULATION-v2.md:158-205' },
+  { id:'l1_feynman', label:'费曼检测追问', kind:'subcap',
+    desc:'CHECK 状态 LLM 出题 → 学生作答 → 语义判分 → L1→L2→L3 三级反馈。',
+    ref:'48H-SIMULATION-v2.md:170-195' },
+  { id:'l1_fsrs', label:'FSRS 间隔复习', kind:'subcap',
+    desc:'每 3 新概念插 1 复习节点;4 模式: 快测/关系图/费曼复述/错题变体;5分钟/卡 节流。',
+    ref:'48H-SIMULATION-v2.md:273-289' },
+  { id:'l1_stage', label:'阶段校准', kind:'subcap',
+    desc:'7 天滑动窗口聚合准确率;升档需连续 2 天 >80%,降档需连续 2 天 <60%(防抖)。',
+    ref:'ADR-AITutor-V3.1-20260602.md:64-70' },
+  { id:'l1_rest', label:'认知过载休息', kind:'subcap',
+    desc:'认知负荷估计器 4 信号: 退缩模式/答题变快/错误回归/当前负荷 > 0.75 触发休息。',
+    ref:'48H-SIMULATION-v2.md:228-248' },
+  { id:'l1_interrupt', label:'学生打断响应', kind:'subcap',
+    desc:'handle_interrupt: 意图分类 → concept_question/conf=0.92 → 响应 + 断点保存 → 恢复教学。',
+    ref:'48H-SIMULATION-v2.md:209-221' },
+  { id:'l1_checkpoint', label:'阶段总结', kind:'subcap',
+    desc:'学生主动总结 + 系统出 5 题诊断错误类型 → 针对性复习。',
+    ref:'48H-SIMULATION-v2.md:243-247' },
+  { id:'l1_anti_hallu', label:'NLI 抗幻觉', kind:'subcap',
+    desc:'M-008 NLI 评分 < 0.7 触发重检索 ≤ 3 轮;阈值未达标注"无法确认"+ 切网页搜索。',
+    ref:'ADR-AITutor-V3.1-20260602.md:48-54' },
+  { id:'l1_m_mastery', label:'掌握度演进', kind:'metric',
+    desc:'BKT 0.05→0.56→0.72→0.94 单概念轨迹;DKT 跨概念归因;FSRS 状态 NEW→LEARNING→REVIEW→RELEARNING。',
+    metric:'净教学 12+ 概念/小时' },
+
+  // 下方：复盘期
+  { id:'l1_insight', label:'学习洞察报告', kind:'subcap',
+    desc:'6 字段: 整体掌握度 / 强项 / 弱项 / 学习风格演化 / 推荐焦点 / 下一里程碑。',
+    ref:'48H-SIMULATION-v2.md:303-331' },
+  { id:'l1_artifact', label:'7 种产物生成', kind:'subcap',
+    desc:'思维导图 PNG / 手写笔记 PDF / 测验 HTML / 幻灯片 PDF+PPTX / 音频复习 / Git / Obsidian。',
+    ref:'48H-SIMULATION-v2.md:120-133' },
+  { id:'l1_sync', label:'Git + Obsidian 同步', kind:'subcap',
+    desc:'内嵌 Git 引擎推送至 {user}/{subject} 仓库;Obsidian 拉取作业文件(如配置 Vault)。',
+    ref:'48H-SIMULATION-v2.md:130-133' },
+  { id:'l1_m_final', label:'85% 概念掌握', kind:'metric',
+    desc:'683/847 概念掌握 >0.85 (80.6%); 强项 多元微分 0.94 / 弱项 曲面积分 0.62;净教学 38.2h。',
+    metric:'掌握率 ≥ 75%' },
+
+  // 左方：横切
+  { id:'l1_redline', label:'红线治理', kind:'subcap',
+    desc:'M-016 Ruff/Import Linter/Redocly/pre-commit 4 工具链 → 6+1 规范矩阵 + CI 锁版本。',
+    ref:'ADR-AITutor-V3.1-20260602.md:80-86' },
+  { id:'l1_memory', label:'长期记忆', kind:'subcap',
+    desc:'M-013 长期记忆满时 LRU 淘汰最旧 10%;摘要压缩 + 实体+事实+溯源写入。',
+    ref:'ADR-AITutor-V3.1-20260602.md:96-102' },
+  { id:'l1_trace', label:'链路追踪', kind:'subcap',
+    desc:'M-006 structlog + OTel + EventBus + Trace;32hex 贯穿所有模块,WS 推送 + JSONL 日志。',
+    ref:'end-to-end-trace.md:23-39' },
+  { id:'l1_persist', label:'持久化存储', kind:'subcap',
+    desc:'M-017 存储: SQLite(WAL) + ChromaDB 向量 + 文件存储;事务封装强一致。',
+    ref:'end-to-end-trace.md:73-87' }
+];
+
+const T1_EDGES = [
+  { id:'e1_root_bootstrap', source:'l1_root', target:'l1_bootstrap' },
+  { id:'e1_root_ingest', source:'l1_root', target:'l1_ingest' },
+  { id:'e1_root_kg', source:'l1_root', target:'l1_kg' },
+  { id:'e1_bootstrap_ingest', source:'l1_bootstrap', target:'l1_ingest' },
+  { id:'e1_ingest_kg', source:'l1_ingest', target:'l1_kg' },
+  { id:'e1_kg_metric', source:'l1_kg', target:'l1_m_kg' },
+  { id:'e1_kg_coldstart', source:'l1_kg', target:'l1_coldstart' },
+  { id:'e1_coldstart_plan', source:'l1_coldstart', target:'l1_plan' },
+  { id:'e1_plan_metric', source:'l1_plan', target:'l1_m_plan' },
+  { id:'e1_plan_explain', source:'l1_plan', target:'l1_explain' },
+  { id:'e1_explain_feynman', source:'l1_explain', target:'l1_feynman' },
+  { id:'e1_feynman_fsrs', source:'l1_feynman', target:'l1_fsrs' },
+  { id:'e1_fsrs_stage', source:'l1_fsrs', target:'l1_stage' },
+  { id:'e1_explain_rest', source:'l1_explain', target:'l1_rest' },
+  { id:'e1_explain_interrupt', source:'l1_explain', target:'l1_interrupt' },
+  { id:'e1_explain_checkpoint', source:'l1_explain', target:'l1_checkpoint' },
+  { id:'e1_anti_hallu_feynman', source:'l1_anti_hallu', target:'l1_feynman' },
+  { id:'e1_feynman_metric', source:'l1_feynman', target:'l1_m_mastery' },
+  { id:'e1_stage_metric', source:'l1_stage', target:'l1_m_mastery' },
+  { id:'e1_mastery_insight', source:'l1_m_mastery', target:'l1_insight' },
+  { id:'e1_insight_artifact', source:'l1_insight', target:'l1_artifact' },
+  { id:'e1_artifact_sync', source:'l1_artifact', target:'l1_sync' },
+  { id:'e1_sync_metric', source:'l1_sync', target:'l1_m_final' },
+  { id:'e1_root_redline', source:'l1_root', target:'l1_redline' },
+  { id:'e1_root_memory', source:'l1_root', target:'l1_memory' },
+  { id:'e1_root_trace', source:'l1_root', target:'l1_trace' },
+  { id:'e1_root_persist', source:'l1_root', target:'l1_persist' },
+  { id:'e1_trace_feynman', source:'l1_trace', target:'l1_feynman' }
+];
+
+// ---------- Tab 2: 设计方法图谱 (L2) — 22 节点, 30 边 ----------
+const T2_NODES = [
+  // 中心: 5 大核心方法
+  { id:'m_feynman', label:'费曼学习法', kind:'method',
+    desc:'输出驱动 + 简化解释 + 自我检测。LLM 评 0-5 分钳制到 [0,5];三层容错解析;10% LLM 兜底走 FSM 审计。',
+    quote:'Strategy 模式: 评分器 + 提示构造器 + 解析器,三类均可替换。',
+    ref:'FF-M-010-AITutor-V3.1-20260602.md:88-94' },
+  { id:'m_scaffold', label:'降阶脚手架', kind:'method',
+    desc:'bottom_up 概念依赖降阶;5 阶段难度递进;跳过掌握度 >0.85 已掌握概念;按前置拓扑排序未掌握。',
+    quote:'610 未掌握概念切片 + 跳过 28% (237 已掌握)。',
+    ref:'48H-SIMULATION-v2.md:135-151' },
+  { id:'m_cognitive', label:'认知状态机', kind:'method',
+    desc:'6 态 FSM: 空闲/学习/复习/练习/休息/调档;6 事件驱动;掌握度 0-1 量化认知状态。',
+    quote:'升档需连续 2 天 >80%,降档需连续 2 天 <60%。',
+    ref:'FF-M-009-AITutor-V3.1-20260602.md:22-30' },
+  { id:'m_fsrs', label:'FSRS 间隔重复', kind:'method',
+    desc:'自由间隔重复调度器 (py-fsrs);单例封装保证算法状态全进程共享;新→学习中→复习→再学习。',
+    quote:'FSRS调度器 单例 + Again节流 5分钟/卡 (300秒)。',
+    ref:'FF-M-011-AITutor-V3.1-20260602.md:14-29' },
+  { id:'m_hysteresis', label:'阶段校准', kind:'method',
+    desc:'7 天滑动窗口聚合准确率;升档连续 2 天 >80% / 降档连续 2 天 <60%;夹紧(0..5) 边界;防档位跳变。',
+    quote:'ADR-008: 阶段迟滞 升/降档各需连续 2 天。',
+    ref:'ADR-AITutor-V3.1-20260602.md:64-70' },
+
+  // 二级: 协作方法
+  { id:'m_nli', label:'NLI 抗幻觉', kind:'method',
+    desc:'自然语言推理评分 100% 带源;< 0.7 触发重检索 ≤ 3 轮;阈值未达标注"无法确认"+ 切网页搜索。',
+    quote:'ADR-006: NLI 100% 带源,重检索 ≤ 3 轮。',
+    ref:'ADR-AITutor-V3.1-20260602.md:48-54' },
+  { id:'m_kg', label:'知识图谱', kind:'method',
+    desc:'depth=full 模式: 12 种语义关系(类比:203, 泛化:156, ...);概念节点 847;三元组 3247。',
+    quote:'批量 enrich 80批×10概/批×8并发 ≈ 8min;关系挖掘 12 种。',
+    ref:'48H-SIMULATION-v2.md:88-107' },
+  { id:'m_route', label:'复杂度路由', kind:'method',
+    desc:'M-008 路由子: 默认关键字匹配;V4.5 POC 落地;按查询特征路由到不同检索策略。',
+    quote:'ADR-011: 复杂度路由默认关键字匹配 + V4.5 POC 落地。',
+    ref:'ADR-AITutor-V3.1-20260602.md:88-94' },
+  { id:'m_fsm_llm', label:'90% 状态机 + 10% LLM 兜底', kind:'method',
+    desc:'教学编排主路径 90% 由状态机决定,10% 由 LLM 兜底(带链路 + 审计);E00901/E00902/E00903 异常码覆盖。',
+    quote:'ADR-005: 90% FSM + 10% LLM 兜底(带链路 + 审计)。',
+    ref:'ADR-AITutor-V3.1-20260602.md:40-46' },
+  { id:'m_cog_load', label:'认知负荷估计', kind:'method',
+    desc:'4 信号: 退缩模式/答题加速/错误回归/当前负荷;阈值 0.75 触发策略切换/休息;零基础 0.6。',
+    quote:'过载触发 拆解→类比 切换;心流时切 苏格拉底。',
+    ref:'48H-SIMULATION-v2.md:228-248' },
+  { id:'m_pgfga', label:'心流追踪', kind:'method',
+    desc:'4 级心流: 静默/深层/沉浸/心流;4 信号: 回答变长/深度增加/犹豫减少/主动关联。',
+    quote:'心流 深层→沉浸 切策略至 苏格拉底;掌握度 0.65→0.88 跃迁。',
+    ref:'48H-SIMULATION-v2.md:252-271' },
+  { id:'m_bkt_dkt', label:'知识追踪', kind:'method',
+    desc:'贝叶斯知识追踪 (单概念 0-1) + 深度知识追踪轻量版 (跨概念归因)。',
+    quote:'优化#9: 跨概念预测 — 学完级数后,傅里叶变换前置掌握度 0.63。',
+    ref:'48H-SIMULATION-v2.md:299-301' },
+  { id:'m_3layer', label:'三级反馈', kind:'method',
+    desc:'L1 模板(紧急备用) → L2 模板+诊断(标准) → L3 LLM 润色+防火墙(默认);API 故障自动降级。',
+    quote:'优化#7: 反馈分级,体验质变;防火墙检查防 LLM 越界。',
+    ref:'48H-SIMULATION-v2.md:386-389' },
+  { id:'m_6strategy', label:'6 策略选择', kind:'method',
+    desc:'拆解/费曼/苏格拉底/类比/项目/错题;按(掌握度,负荷,抽象度,画像)选 1。',
+    quote:'优化#4: 6 策略自动选择;心流时切 苏格拉底。',
+    ref:'48H-SIMULATION-v2.md:54' },
+
+  // 三级: 关键规则
+  { id:'r_clamp', label:'评分钳制 [0,5]', kind:'rule',
+    desc:'费曼评分越界值钳到 [0,5],避免 LLM 幻觉分数破坏下游教学状态机。',
+    ref:'FF-M-010-AITutor-V3.1-20260602.md:90' },
+  { id:'r_3layer_parse', label:'三层容错解析', kind:'rule',
+    desc:'JSON → 正则 → 兜底 三层容错解析 LLM 响应;每层失败返回 None,外层决策是否抛异常。',
+    ref:'FF-M-010-AITutor-V3.1-20260602.md:91' },
+  { id:'r_sanitize', label:'提示词注入防御', kind:'rule',
+    desc:'转义用户输入,包裹分隔符,避免 user_answer 篡改系统指令 (CS 8 安全规范)。',
+    ref:'FF-M-010-AITutor-V3.1-20260602.md:93' },
+  { id:'r_singleton', label:'FSRS 单例约束', kind:'rule',
+    desc:'FSRS调度器 单例约束: 算法状态必须全进程共享,避免卡片参数漂移。',
+    ref:'FF-M-011-AITutor-V3.1-20260602.md:5' },
+  { id:'r_again', label:'5分钟/卡 节流', kind:'rule',
+    desc:'同卡片 5 分钟内仅允许 1 次 Again;窗口 300 秒;防看板爆炸 (反例驱动)。',
+    ref:'FF-M-011-AITutor-V3.1-20260602.md:24' },
+  { id:'r_hyst_2d', label:'升档 2 天 >80% / 降档 2 天 <60%', kind:'rule',
+    desc:'迟滞 双阈值;反例驱动;防档位跳变;7 天滑动窗口聚合。',
+    ref:'FF-M-012-AITutor-V3.1-20260602.md:36-43' },
+  { id:'r_window7d', label:'7 天 滑动窗口', kind:'rule',
+    desc:'阶段评估器 窗口=7天;迟滞=2天;表现数据载体 + 每日样本。',
+    ref:'FF-M-012-AITutor-V3.1-20260602.md:18-19' },
+  { id:'r_nli_07', label:'NLI 阈值 0.7/最多 3 轮', kind:'rule',
+    desc:'_rerank_round(轮数++) 触发;上限 3 轮;3 轮仍 < 0.7 → E00801 兜底。',
+    ref:'end-to-end-trace.md:35' },
+  { id:'r_kg_8min', label:'图谱批量 8分钟', kind:'rule',
+    desc:'批量 enrich: 80 批 × 10 概念/批 × 8 并发 ≈ 8min;每批写断点(中断可恢复)。',
+    ref:'48H-SIMULATION-v2.md:91-95' }
+];
+
+const T2_EDGES = [
+  { id:'e2_feynman_clamp', source:'m_feynman', target:'r_clamp' },
+  { id:'e2_feynman_3layer', source:'m_feynman', target:'r_3layer_parse' },
+  { id:'e2_feynman_sanitize', source:'m_feynman', target:'r_sanitize' },
+  { id:'e2_fsrs_singleton', source:'m_fsrs', target:'r_singleton' },
+  { id:'e2_fsrs_again', source:'m_fsrs', target:'r_again' },
+  { id:'e2_hyst_2d', source:'m_hysteresis', target:'r_hyst_2d' },
+  { id:'e2_hyst_window', source:'m_hysteresis', target:'r_window7d' },
+  { id:'e2_nli_07', source:'m_nli', target:'r_nli_07' },
+  { id:'e2_kg_8min', source:'m_kg', target:'r_kg_8min' },
+  { id:'e2_feynman_scaffold', source:'m_feynman', target:'m_scaffold' },
+  { id:'e2_scaffold_kg', source:'m_scaffold', target:'m_kg' },
+  { id:'e2_cog_fsrs', source:'m_cognitive', target:'m_fsrs' },
+  { id:'e2_cog_hyst', source:'m_cognitive', target:'m_hysteresis' },
+  { id:'e2_cog_load', source:'m_cognitive', target:'m_cog_load' },
+  { id:'e2_cog_pgfga', source:'m_cognitive', target:'m_pgfga' },
+  { id:'e2_feynman_nli', source:'m_feynman', target:'m_nli' },
+  { id:'e2_feynman_3fb', source:'m_feynman', target:'m_3layer' },
+  { id:'e2_feynman_bkt', source:'m_feynman', target:'m_bkt_dkt' },
+  { id:'e2_6strat_scaffold', source:'m_6strategy', target:'m_scaffold' },
+  { id:'e2_6strat_cog', source:'m_6strategy', target:'m_cognitive' },
+  { id:'e2_fsm_llm_cog', source:'m_fsm_llm', target:'m_cognitive' },
+  { id:'e2_route_nli', source:'m_route', target:'m_nli' },
+  { id:'e2_scaffold_6strat', source:'m_scaffold', target:'m_6strategy' },
+  { id:'e2_cog_feynman', source:'m_cognitive', target:'m_feynman' },
+  { id:'e2_cog_cog2', source:'m_cognitive', target:'m_cognitive' },
+  { id:'e2_6strat_cog_load', source:'m_6strategy', target:'m_cog_load' },
+  { id:'e2_bkt_6strat', source:'m_bkt_dkt', target:'m_6strategy' },
+  { id:'e2_pgfga_6strat', source:'m_pgfga', target:'m_6strategy' },
+  { id:'e2_route_route2', source:'m_route', target:'m_route' },
+  { id:'e2_nli_kg', source:'m_nli', target:'m_kg' }
+];
+
+// ---------- Tab 3: 概念→设计→代码 (L1+L2+L3) — 22 节点, 26 边 ----------
+const T3_NODES = [
+  // L1 业务概念
+  { id:'l1c_bootstrap', label:'启动期', kind:'concept', layer:'L1',
+    desc:'T-24h~T+1h: 客户端启动 + 多源采集 + 图谱构建 + 冷启动摸底。',
+    ref:'48H-SIMULATION-v2.md:67-107' },
+  { id:'l1c_plan', label:'学习计划', kind:'concept', layer:'L1',
+    desc:'5 阶段切片 + 跳过已掌握 + 时间校准 + 阶段摘要。',
+    ref:'48H-SIMULATION-v2.md:135-151' },
+  { id:'l1c_feynman', label:'费曼检测', kind:'concept', layer:'L1',
+    desc:'CHECK 状态 LLM 出题 + 0-5 评分 + L1→L2→L3 反馈。',
+    ref:'48H-SIMULATION-v2.md:170-205' },
+  { id:'l1c_review', label:'间隔复习', kind:'concept', layer:'L1',
+    desc:'FSRS 0-3 评级 + 4 模式 (快测/关系图/费曼复述/错题变体) + 5分钟/卡 节流。',
+    ref:'48H-SIMULATION-v2.md:273-289' },
+  { id:'l1c_stage', label:'阶段升级', kind:'concept', layer:'L1',
+    desc:'7天 滑动窗口 + 升档 2 天 >80% / 降档 2 天 <60% (迟滞)。',
+    ref:'48H-SIMULATION-v2.md:561-570' },
+  { id:'l1c_rest', label:'主动休息', kind:'concept', layer:'L1',
+    desc:'4 信号 → 负荷估计 → 策略切换或休息 + 断点保存。',
+    ref:'48H-SIMULATION-v2.md:228-248' },
+
+  // L2 设计方法
+  { id:'l2m_scaffold', label:'降阶脚手架', kind:'method', layer:'L2',
+    desc:'bottom_up 概念依赖 + 5 阶段难度递进 + 跳过掌握度 >0.85。',
+    ref:'48H-SIMULATION-v2.md:135-151' },
+  { id:'l2m_feynman', label:'费曼评分', kind:'method', layer:'L2',
+    desc:'LLM 评分 + 三层容错 + 钳制 + 注入防御 + 10% LLM 兜底。',
+    ref:'FF-M-010-AITutor-V3.1-20260602.md:88-94' },
+  { id:'l2m_fsrs', label:'FSRS 间隔重复', kind:'method', layer:'L2',
+    desc:'py-fsrs 单例 + 5分钟/卡 节流 + 4 模式选择。',
+    ref:'FF-M-011-AITutor-V3.1-20260602.md:14-29' },
+  { id:'l2m_hysteresis', label:'阶段迟滞', kind:'method', layer:'L2',
+    desc:'阶段评估器 7天窗口 + 阶段转换 双阈值夹紧(0..5)。',
+    ref:'FF-M-012-AITutor-V3.1-20260602.md:13-22' },
+  { id:'l2m_cognitive', label:'认知状态机', kind:'method', layer:'L2',
+    desc:'6 态 (空闲/学习/复习/练习/休息/调档) + 6 事件 + 4 异常码。',
+    ref:'FF-M-009-AITutor-V3.1-20260602.md:22-30' },
+  { id:'l2m_orch', label:'教学编排', kind:'method', layer:'L2',
+    desc:'教学编排器 串联 状态机 + 调度器 (中介者模式) + 委托 M-010/M-011/M-012。',
+    ref:'FF-M-009-AITutor-V3.1-20260602.md:16-21' },
+
+  // L3 代码实现
+  { id:'l3c_M009_orch', label:'M-009 教学编排器', kind:'code', layer:'L3',
+    desc:'orchestrator.py 教学编排主类: 下一步() / 分派动作() / 费曼教学() / FSRS调度() 委托。',
+    quote:'属性 状态机/调度器/最后动作;IC-002 关联;状态机+中介者组合模式。',
+    ref:'FF-M-009-AITutor-V3.1-20260602.md:16-21' },
+  { id:'l3c_M009_fsm', label:'M-009 教学状态机', kind:'code', layer:'L3',
+    desc:'state_machine.py 6 态 6 事件: 空闲/学习/复习/练习/休息/调档;E00902 卡死。',
+    ref:'FF-M-009-AITutor-V3.1-20260602.md:22-30' },
+  { id:'l3c_M009_disp', label:'M-009 动作调度器', kind:'code', layer:'L3',
+    desc:'dispatcher.py 中介者模式: 处理器/兜底处理器 + 注册/注销/分派/设兜底。',
+    ref:'FF-M-009-AITutor-V3.1-20260602.md:31-39' },
+  { id:'l3c_M010_scorer', label:'M-010 费曼评分器', kind:'code', layer:'L3',
+    desc:'feynman/scorer.py 策略入口: 评分() + 钳制分数 [0,5] + E01001/E01002 兜底;降级标记。',
+    ref:'FF-M-010-AITutor-V3.1-20260602.md:28-32' },
+  { id:'l3c_M010_prompt', label:'M-010 提示构造器', kind:'code', layer:'L3',
+    desc:'feynman/prompt.py 模板构造器: 构建() + 默认模板常量 + 清洗 注入防御。',
+    ref:'FF-M-010-AITutor-V3.1-20260602.md:30-31' },
+  { id:'l3c_M010_parser', label:'M-010 响应解析器', kind:'code', layer:'L3',
+    desc:'feynman/parser.py 响应解析: 解析() JSON→正则→兜底 三层容错;策略字段可审计。',
+    ref:'FF-M-010-AITutor-V3.1-20260602.md:32' },
+  { id:'l3c_M011_sched', label:'M-011 FSRS调度器', kind:'code', layer:'L3',
+    desc:'fsrs/scheduler.py 单例封装 py-fsrs: 排卡() / 更新卡() / 取到期() / 取默认调度器()。',
+    ref:'FF-M-011-AITutor-V3.1-20260602.md:14-25' },
+  { id:'l3c_M011_throttle', label:'M-011 Again节流', kind:'code', layer:'L3',
+    desc:'fsrs/throttle.py 5分钟/卡节流 (300秒): 已节流() / 记录Again() / 取节流统计() / 重置节流()。',
+    ref:'FF-M-011-AITutor-V3.1-20260602.md:24-29' },
+  { id:'l3c_M012_eval', label:'M-012 阶段评估器', kind:'code', layer:'L3',
+    desc:'stage/evaluator.py 7天滑动窗口: 评估阶段() 顶层入口 + 表现/每日样本 数据载体。',
+    ref:'FF-M-012-AITutor-V3.1-20260602.md:18-19' },
+  { id:'l3c_M012_trans', label:'M-012 阶段转换器', kind:'code', layer:'L3',
+    desc:'stage/transition.py 档位转换: 可升/可降 + 夹紧 越界;转换阶段 顶层入口;跨度 1 合法/跨度 2 拒绝。',
+    ref:'FF-M-012-AITutor-V3.1-20260602.md:20-22' }
+];
+
+const T3_EDGES = [
+  { id:'e3_bootstrap_scaffold', source:'l1c_bootstrap', target:'l2m_scaffold' },
+  { id:'e3_bootstrap_orch', source:'l1c_bootstrap', target:'l2m_orch' },
+  { id:'e3_plan_scaffold', source:'l1c_plan', target:'l2m_scaffold' },
+  { id:'e3_feynman_feynman', source:'l1c_feynman', target:'l2m_feynman' },
+  { id:'e3_feynman_orch', source:'l1c_feynman', target:'l2m_orch' },
+  { id:'e3_review_fsrs', source:'l1c_review', target:'l2m_fsrs' },
+  { id:'e3_stage_hyst', source:'l1c_stage', target:'l2m_hysteresis' },
+  { id:'e3_rest_cog', source:'l1c_rest', target:'l2m_cognitive' },
+  { id:'e3_scaffold_orch', source:'l2m_scaffold', target:'l3c_M009_orch' },
+  { id:'e3_orch_orch', source:'l2m_orch', target:'l3c_M009_orch' },
+  { id:'e3_orch_fsm', source:'l2m_orch', target:'l3c_M009_fsm' },
+  { id:'e3_orch_disp', source:'l2m_orch', target:'l3c_M009_disp' },
+  { id:'e3_cog_fsm', source:'l2m_cognitive', target:'l3c_M009_fsm' },
+  { id:'e3_feynman_scorer', source:'l2m_feynman', target:'l3c_M010_scorer' },
+  { id:'e3_feynman_prompt', source:'l2m_feynman', target:'l3c_M010_prompt' },
+  { id:'e3_feynman_parser', source:'l2m_feynman', target:'l3c_M010_parser' },
+  { id:'e3_fsrs_sched', source:'l2m_fsrs', target:'l3c_M011_sched' },
+  { id:'e3_fsrs_throttle', source:'l2m_fsrs', target:'l3c_M011_throttle' },
+  { id:'e3_hyst_eval', source:'l2m_hysteresis', target:'l3c_M012_eval' },
+  { id:'e3_hyst_trans', source:'l2m_hysteresis', target:'l3c_M012_trans' },
+  { id:'e3_bootstrap_orch2', source:'l1c_bootstrap', target:'l3c_M009_orch' },
+  { id:'e3_feynman_scorer2', source:'l1c_feynman', target:'l3c_M010_scorer' },
+  { id:'e3_review_sched2', source:'l1c_review', target:'l3c_M011_sched' },
+  { id:'e3_stage_eval2', source:'l1c_stage', target:'l3c_M012_eval' },
+  { id:'e3_rest_fsm2', source:'l1c_rest', target:'l3c_M009_fsm' },
+  { id:'e3_plan_orch', source:'l1c_plan', target:'l2m_orch' }
+];
+
+// ---------- Tab 4: 认知旅程 (Timeline) — 33 节点, 38 边 ----------
+const T4_NODES = [
+  // 时间锚点 (10)
+  { id:'t_m24h', label:'T-24h 准备', kind:'anchor', t:-1440,
+    desc:'打开系统,LLM Provider 配置 + Docker 拉取 + `ai-tutor doctor` 检查 pdf2zh/mineru/whisper/GPU。',
+    ref:'48H-SIMULATION-v2.md:67-79' },
+  { id:'t_t0', label:'T=0 启动', kind:'anchor', t:0,
+    desc:'用户输入"我要学同济版高等数学下册",系统检查已有知识库 → 提示多源采集。',
+    ref:'48H-SIMULATION-v2.md:71-79' },
+  { id:'t_t20m', label:'T+20m 多源归一', kind:'anchor', t:20,
+    desc:'PDF→MinerU 转 Markdown(400页×3s=20min)并行: yt-dlp+Whisper+DuckDuckGo;多源归一去重。',
+    ref:'48H-SIMULATION-v2.md:81-85' },
+  { id:'t_t45m', label:'T+45min 图谱完成', kind:'anchor', t:45,
+    desc:'depth=full: 12章/48节/~800 标题 → 批量 enrich 80批×10概/批×8并发 ≈ 8min → 关系挖掘 ~5min → 质量门禁 94%。',
+    ref:'48H-SIMULATION-v2.md:88-107' },
+  { id:'t_t1h', label:'T+1h 冷启动摸底', kind:'anchor', t:60,
+    desc:'10 题摸底(3+4+3 按抽象度) + 追问答 + 计时 → 整体掌握度 0.28 + 抽象接受度 0.62。',
+    ref:'48H-SIMULATION-v2.md:109-133' },
+  { id:'t_t1h5m', label:'T+1:05 阶段启动', kind:'anchor', t:65,
+    desc:'610 未掌握概念拓扑排序 → 5 阶段切片;欢迎语"从摸底看,向量代数基础扎实"。',
+    ref:'48H-SIMULATION-v2.md:135-151' },
+  { id:'t_t12h', label:'T+12h 心流深潜', kind:'anchor', t:720,
+    desc:'第 3 节课 中段,心流 深层→沉浸;4 信号: 回答变长/深度增加/犹豫减少/主动关联;净分 +3。',
+    ref:'48H-SIMULATION-v2.md:252-271' },
+  { id:'t_t23h', label:'T+23h 复习调度', kind:'anchor', t:1380,
+    desc:'第 3 阶段开始前 15 分钟;遗忘曲线触发: 方向导数 λ=0.25→回忆率=0.68 / 梯度 λ=0.20→回忆率=0.75;总复习 6 分钟。',
+    ref:'48H-SIMULATION-v2.md:273-289' },
+  { id:'t_t45h', label:'T+45h 最终概念', kind:'anchor', t:2700,
+    desc:'第 5 阶段(级数)最后概念"傅里叶级数"完成;BKT 统计 683/847=80.6% 掌握;DKT 预测傅里叶变换前置 0.63。',
+    ref:'48H-SIMULATION-v2.md:293-301' },
+  { id:'t_t48h', label:'T+48h 终态', kind:'anchor', t:2880,
+    desc:'学习报告 + 7 产物 + Git/Obsidian 同步;净教学 38.2h / 测评 2.1h / 复习 4.5h / 休息 3.2h。',
+    ref:'48H-SIMULATION-v2.md:303-331' },
+
+  // 状态 (7)
+  { id:'s_mastery_low', label:'掌握度 0-0.3 陌生', kind:'state',
+    desc:'BKT 初始 0.05;状态 新;刚接触概念,需要拆解策略 + LLM 讲解。',
+    ref:'48H-SIMULATION-v2.md:178' },
+  { id:'s_mastery_mid', label:'掌握度 0.3-0.7 理解', kind:'state',
+    desc:'费曼 ≥3 分过;BKT 0.56→0.72;学习中 状态;类比/推导已掌握。',
+    ref:'48H-SIMULATION-v2.md:193' },
+  { id:'s_mastery_high', label:'掌握度 0.7-0.85 能迁移', kind:'state',
+    desc:'检查点达标 + 跨情境应用;复习 状态;DKT 跨概念归因。',
+    ref:'48H-SIMULATION-v2.md:265' },
+  { id:'s_mastery_done', label:'掌握度 >0.85 已掌握', kind:'state',
+    desc:'FSRS 再学习 出口;683/847 概念 (80.6%);BKT 0.94 单概念轨迹。',
+    ref:'48H-SIMULATION-v2.md:298' },
+  { id:'s_overload', label:'认知过载 负荷>0.7', kind:'state',
+    desc:'4 信号同时触发: 退缩模式 / 错误回归 / 当前负荷 0.81;切换 拆解→类比 或休息。',
+    ref:'48H-SIMULATION-v2.md:228-238' },
+  { id:'s_flow_deep', label:'心流 深层/沉浸', kind:'state',
+    desc:'净分≥+3;主动关联;切策略至 苏格拉底;掌握度 0.65→0.88 跃迁。',
+    ref:'48H-SIMULATION-v2.md:255-265' },
+  { id:'s_fading', label:'遗忘中 回忆<0.7', kind:'state',
+    desc:'长期 λ 触发: 方向导数 λ=0.25→回忆率=0.68;触发 FSRS 提前复习。',
+    ref:'48H-SIMULATION-v2.md:280-283' },
+
+  // 系统动作 (16)
+  { id:'a_cold_start', label:'冷启动摸底', kind:'action',
+    desc:'engine._cold_start_assessment: 10 题 × 3 层抽象度 + 追问答 + 计时;输出 整体掌握度/抽象接受度/迁移能力。',
+    ref:'48H-SIMULATION-v2.md:113-133' },
+  { id:'a_kg_build', label:'图谱 批量 enrich', kind:'action',
+    desc:'批量 enrich: 80 批 × 10 概念/批 × 8 并发 ≈ 8分钟;每批写断点 中断可恢复。',
+    ref:'48H-SIMULATION-v2.md:91-95' },
+  { id:'a_kg_relations', label:'关系挖掘 12 种', kind:'action',
+    desc:'关系挖掘: 类比:203 / 泛化:156 / 证明 ...;LLM 推断 ≈ 5分钟。',
+    ref:'48H-SIMULATION-v2.md:96-100' },
+  { id:'a_kg_review', label:'图谱 质量门禁', kind:'action',
+    desc:'自动补示例 + 环检测;章节覆盖 ≥ 94%;3 孤立概念自动修复;良性环 保留。',
+    ref:'48H-SIMULATION-v2.md:99-102,521-533' },
+  { id:'a_plan_gen', label:'5 阶段计划生成', kind:'action',
+    desc:'学习计划: 610 未掌握拓扑排序 + 阶段切片(8/12/14/8/4h) + 20% 复习穿插 + 时间校准。',
+    ref:'48H-SIMULATION-v2.md:135-151' },
+  { id:'a_strategy_select', label:'6 策略选择', kind:'action',
+    desc:'策略选择器: 按(掌握度, 负荷, 抽象度, 画像) 选 1: 拆解/费曼/苏格拉底/类比/项目/错题。',
+    ref:'48H-SIMULATION-v2.md:54' },
+  { id:'a_explain', label:'LLM 讲解', kind:'action',
+    desc:'LLM 讲解: 替代模板, 类比+例子+逐步推导;~152 次/38h 净教学。',
+    ref:'48H-SIMULATION-v2.md:158-205' },
+  { id:'a_ask_check', label:'CHECK 出题', kind:'action',
+    desc:'出题: 按第 N 次尝试调整难度;LLM 基于图谱定义生成题面。',
+    ref:'48H-SIMULATION-v2.md:170-175' },
+  { id:'a_score', label:'LLM 语义判分', kind:'action',
+    desc:'LLM 判分: 正确性 + 证据;228 次/38h。',
+    ref:'48H-SIMULATION-v2.md:382' },
+  { id:'a_bkt_update', label:'BKT/DKT 更新', kind:'action',
+    desc:'dkt_model.py: 单概念 BKT + 跨概念 DKT 联合;0.05→0.56→0.72→0.94 轨迹。',
+    ref:'48H-SIMULATION-v2.md:178,193,265,383' },
+  { id:'a_error_diag', label:'错误诊断', kind:'action',
+    desc:'错误诊断器.diagnose(): 错误类型 + 修复建议;7 类错误分类。',
+    ref:'48H-SIMULATION-v2.md:384' },
+  { id:'a_feedback_L3', label:'L3 反馈润色', kind:'action',
+    desc:'构建反馈: L1 模板 → L2 模板+诊断 → L3 LLM 润色+防火墙;API 故障降级。',
+    ref:'48H-SIMULATION-v2.md:386-389' },
+  { id:'a_cog_load', label:'认知负荷估计', kind:'action',
+    desc:'估计认知负荷: 4 信号(退缩/加速/答错回归/当前负荷);阈值 0.75;零基础 0.6。',
+    ref:'48H-SIMULATION-v2.md:228-238,57' },
+  { id:'a_strategy_swap', label:'策略自动切换', kind:'action',
+    desc:'过载 → 拆解→类比;心流 → 拆解→苏格拉底;6 策略间无缝切换。',
+    ref:'48H-SIMULATION-v2.md:235,265' },
+  { id:'a_interrupt', label:'打断响应', kind:'action',
+    desc:'处理打断: 意图分类 → 概念问答/置信度=0.92 → LLM 响应 → 恢复。',
+    ref:'48H-SIMULATION-v2.md:209-221' },
+  { id:'a_rest', label:'主动休息 15分钟', kind:'action',
+    desc:'断点: 30分钟 恢复;含 认知负荷 快照;阶段 65% 进度保存。',
+    ref:'48H-SIMULATION-v2.md:243-247' },
+  { id:'a_review_mode', label:'复习模式 4 选 1', kind:'action',
+    desc:'按(掌握度, 回忆率): 快测(>0.7) / 关系图(0.4-0.7) / 费曼复述(<0.4) / 错题变体(错题)。',
+    ref:'48H-SIMULATION-v2.md:285-289' },
+  { id:'a_insight', label:'洞察报告 + 同步', kind:'action',
+    desc:'6 字段报告 + 7 产物(导图/笔记/测验/幻灯/音频/Git/Obsidian);LLM ~790 次/0.13 美元。',
+    ref:'48H-SIMULATION-v2.md:303-331,540-557' }
+];
+
+const T4_EDGES = [
+  { id:'e4_t_m24h_t0', source:'t_m24h', target:'t_t0' },
+  { id:'e4_t0_t20', source:'t_t0', target:'t_t20m' },
+  { id:'e4_t20_t45', source:'t_t20m', target:'t_t45m' },
+  { id:'e4_t45_t1h', source:'t_t45m', target:'t_t1h' },
+  { id:'e4_t1h_t1h5', source:'t_t1h', target:'t_t1h5m' },
+  { id:'e4_t1h5_t12', source:'t_t1h5m', target:'t_t12h' },
+  { id:'e4_t12_t23', source:'t_t12h', target:'t_t23h' },
+  { id:'e4_t23_t45', source:'t_t23h', target:'t_t45h' },
+  { id:'e4_t45_t48', source:'t_t45h', target:'t_t48h' },
+
+  { id:'e4_t0_coldstart', source:'t_t0', target:'a_cold_start' },
+  { id:'e4_t0_kgbuild', source:'t_t0', target:'a_kg_build' },
+  { id:'e4_kgbuild_relations', source:'a_kg_build', target:'a_kg_relations' },
+  { id:'e4_relations_review', source:'a_kg_relations', target:'a_kg_review' },
+  { id:'e4_kg_t45', source:'a_kg_review', target:'t_t45m' },
+  { id:'e4_coldstart_plan', source:'a_cold_start', target:'a_plan_gen' },
+  { id:'e4_plan_t1h5', source:'a_plan_gen', target:'t_t1h5m' },
+
+  { id:'e4_t1h5_strat', source:'t_t1h5m', target:'a_strategy_select' },
+  { id:'e4_strat_explain', source:'a_strategy_select', target:'a_explain' },
+  { id:'e4_explain_low', source:'a_explain', target:'s_mastery_low' },
+  { id:'e4_low_check', source:'s_mastery_low', target:'a_ask_check' },
+  { id:'e4_check_score', source:'a_ask_check', target:'a_score' },
+  { id:'e4_score_mid', source:'a_score', target:'s_mastery_mid' },
+  { id:'e4_mid_bkt', source:'s_mastery_mid', target:'a_bkt_update' },
+  { id:'e4_mid_diag', source:'a_bkt_update', target:'a_error_diag' },
+  { id:'e4_diag_fb', source:'a_error_diag', target:'a_feedback_L3' },
+  { id:'e4_fb_high', source:'a_feedback_L3', target:'s_mastery_high' },
+
+  { id:'e4_load_overload', source:'a_cog_load', target:'s_overload' },
+  { id:'e4_overload_swap', source:'s_overload', target:'a_strategy_swap' },
+  { id:'e4_overload_rest', source:'s_overload', target:'a_rest' },
+  { id:'e4_rest_resume', source:'a_rest', target:'t_t1h5m' },
+
+  { id:'e4_interrupt_anywhere', source:'t_t1h5m', target:'a_interrupt' },
+  { id:'e4_interrupt_resume', source:'a_interrupt', target:'t_t1h5m' },
+
+  { id:'e4_t12_flow', source:'t_t12h', target:'s_flow_deep' },
+  { id:'e4_flow_swap', source:'s_flow_deep', target:'a_strategy_swap' },
+  { id:'e4_flow_done', source:'s_flow_deep', target:'s_mastery_done' },
+
+  { id:'e4_t23_review', source:'t_t23h', target:'a_review_mode' },
+  { id:'e4_review_fading', source:'a_review_mode', target:'s_fading' },
+
+  { id:'e4_t45_done', source:'t_t45h', target:'s_mastery_done' },
+  { id:'e4_done_insight', source:'s_mastery_done', target:'a_insight' },
+  { id:'e4_insight_t48', source:'a_insight', target:'t_t48h' }
+];
+
+const TAB_META = {
+  t1: { count: T1_NODES.length, edges: T1_EDGES.length, name: 'L1 业务能力' },
+  t2: { count: T2_NODES.length, edges: T2_EDGES.length, name: 'L2 设计方法' },
+  t3: { count: T3_NODES.length, edges: T3_EDGES.length, name: '三层映射' },
+  t4: { count: T4_NODES.length, edges: T4_EDGES.length, name: '48h 时间线' }
+};
+
+const KIND_COLORS = {
+  // Claude 风格:橙为主调,暖棕层次
+  goal:'#d97757', concept:'#c2a878', subcap:'#b08552', method:'#b08552',
+  metric:'#a88865', anchor:'#a88865', code:'#a8482b', action:'#b8643a',
+  state:'#3d2f24', rule:'#5a4a3e'
+};
+const KIND_SHAPES = {
+  goal:'round-rectangle', concept:'round-rectangle',
+  subcap:'round-rectangle', method:'round-rectangle',
+  metric:'diamond', anchor:'diamond',
+  code:'round-rectangle', action:'round-rectangle',
+  state:'ellipse', rule:'round-rectangle'
+};
+const KIND_LABELS = {
+  goal:'L1 顶层目标', concept:'L1 业务概念', subcap:'L1 子能力', method:'L2 设计方法',
+  metric:'L1 可测指标', anchor:'时间锚点', code:'L3 代码实现', action:'系统动作',
+  state:'认知/系统状态', rule:'L2 关键规则'
+};
+
+/* ============================================================
+   位置预计算 · 思维导图布局
+   关键:位置在创建 cytoscape 之前就算好,布局统一用 preset
+   ============================================================ */
+
+function computePositions(tabId) {
+  const pos = {};
+  if (tabId === 't1') {
+    // 思维导图: 根中心 + 4 方向主枝
+    const cx = 700, cy = 450;
+    pos['l1_root'] = { x: cx, y: cy };
+    // 上方 (启动+教学准备) - 7 节点
+    pos['l1_bootstrap'] = { x: cx - 280, y: cy - 280 };
+    pos['l1_ingest'] = { x: cx - 100, y: cy - 320 };
+    pos['l1_kg'] = { x: cx + 80, y: cy - 320 };
+    pos['l1_m_kg'] = { x: cx + 250, y: cy - 260 };
+    pos['l1_coldstart'] = { x: cx - 240, y: cy - 180 };
+    pos['l1_plan'] = { x: cx - 60, y: cy - 200 };
+    pos['l1_m_plan'] = { x: cx + 140, y: cy - 200 };
+    // 右方 (教学循环) - 9 节点
+    pos['l1_explain'] = { x: cx + 350, y: cy - 220 };
+    pos['l1_feynman'] = { x: cx + 420, y: cy - 100 };
+    pos['l1_fsrs'] = { x: cx + 480, y: cy + 20 };
+    pos['l1_stage'] = { x: cx + 480, y: cy + 140 };
+    pos['l1_rest'] = { x: cx + 420, y: cy + 260 };
+    pos['l1_interrupt'] = { x: cx + 320, y: cy + 340 };
+    pos['l1_checkpoint'] = { x: cx + 200, y: cy + 360 };
+    pos['l1_anti_hallu'] = { x: cx + 600, y: cy - 80 };
+    pos['l1_m_mastery'] = { x: cx + 580, y: cy + 100 };
+    // 下方 (复盘) - 4 节点
+    pos['l1_insight'] = { x: cx - 180, y: cy + 290 };
+    pos['l1_artifact'] = { x: cx - 50, y: cy + 330 };
+    pos['l1_sync'] = { x: cx + 90, y: cy + 330 };
+    pos['l1_m_final'] = { x: cx + 230, y: cy + 290 };
+    // 左方 (横切) - 4 节点
+    pos['l1_redline'] = { x: cx - 380, y: cy - 100 };
+    pos['l1_memory'] = { x: cx - 420, y: cy + 20 };
+    pos['l1_trace'] = { x: cx - 400, y: cy + 140 };
+    pos['l1_persist'] = { x: cx - 340, y: cy + 260 };
+  }
+  else if (tabId === 't2') {
+    // 思维导图: 5 核心方法在五边形顶点 + 规则贴近 + 协作方法在外圈
+    const cx = 750, cy = 450;
+    pos['m_feynman'] = { x: cx - 250, y: cy - 280 };
+    pos['m_scaffold'] = { x: cx, y: cy - 330 };
+    pos['m_cognitive'] = { x: cx + 250, y: cy - 280 };
+    pos['m_fsrs'] = { x: cx + 350, y: cy + 50 };
+    pos['m_hysteresis'] = { x: cx + 180, y: cy + 320 };
+    pos['m_nli'] = { x: cx - 180, y: cy + 320 };
+    pos['m_kg'] = { x: cx - 350, y: cy + 50 };
+    pos['m_route'] = { x: cx - 480, y: cy - 180 };
+    pos['m_fsm_llm'] = { x: cx + 480, y: cy - 180 };
+    pos['m_cog_load'] = { x: cx + 550, y: cy + 200 };
+    pos['m_pgfga'] = { x: cx + 0, y: cy - 130 };
+    pos['m_bkt_dkt'] = { x: cx + 0, y: cy + 130 };
+    pos['m_3layer'] = { x: cx - 380, y: cy + 250 };
+    pos['m_6strategy'] = { x: cx + 380, y: cy + 250 };
+    // 规则贴近对应方法
+    pos['r_clamp'] = { x: cx - 420, y: cy - 320 };
+    pos['r_3layer_parse'] = { x: cx - 380, y: cy - 200 };
+    pos['r_sanitize'] = { x: cx - 250, y: cy - 410 };
+    pos['r_singleton'] = { x: cx + 470, y: cy + 0 };
+    pos['r_again'] = { x: cx + 500, y: cy + 110 };
+    pos['r_hyst_2d'] = { x: cx + 280, y: cy + 420 };
+    pos['r_window7d'] = { x: cx + 80, y: cy + 410 };
+    pos['r_nli_07'] = { x: cx - 280, y: cy + 420 };
+    pos['r_kg_8min'] = { x: cx - 500, y: cy + 130 };
+  }
+  else if (tabId === 't3') {
+    // 3 列布局: L1 | L2 | L3
+    const xs = { L1: 180, L2: 600, L3: 1080 };
+    T3_NODES.forEach(n => {
+      const layer = n.layer || 'L1';
+      const list = T3_NODES.filter(x => (x.layer || 'L1') === layer);
+      const idx = list.indexOf(n);
+      pos[n.id] = { x: xs[layer], y: 80 + idx * 110 };
+    });
+  }
+  else if (tabId === 't4') {
+    // 时间线: 锚点 y=100 沿 x=t 分布, 状态 y=320 沿 x 铺开, 动作 y=550 沿 x 铺开
+    const minT = -1440, maxT = 2880;
+    const xScale = (t) => 90 + ((t - minT) / (maxT - minT)) * 1320;
+    T4_NODES.filter(n => n.kind === 'anchor').forEach(n => {
+      pos[n.id] = { x: xScale(n.t), y: 100 };
+    });
+    const states = T4_NODES.filter(n => n.kind === 'state');
+    states.forEach((n, i) => { pos[n.id] = { x: 180 + i * 220, y: 320 }; });
+    const actions = T4_NODES.filter(n => n.kind === 'action');
+    actions.forEach((n, i) => {
+      const row = Math.floor(i / 9);
+      const col = i % 9;
+      pos[n.id] = { x: 100 + col * 165, y: 540 + row * 90 };
+    });
+  }
+  return pos;
+}
+
+function buildElements(tabId) {
+  const nodes = tabId === 't1' ? T1_NODES : tabId === 't2' ? T2_NODES
+              : tabId === 't3' ? T3_NODES : T4_NODES;
+  const edges = tabId === 't1' ? T1_EDGES : tabId === 't2' ? T2_EDGES
+              : tabId === 't3' ? T3_EDGES : T4_EDGES;
+  const positions = computePositions(tabId);
+
+  return {
+    nodes: nodes.map(n => ({
+      data: { id: n.id, label: n.label, kind: n.kind, layer: n.layer,
+              desc: n.desc, quote: n.quote, ref: n.ref, metric: n.metric, t: n.t },
+      position: positions[n.id] || { x: 0, y: 0 }
+    })),
+    edges: edges.map(e => ({
+      data: { id: e.id, source: e.source, target: e.target, label: e.label || '' }
+    }))
+  };
+}
+
+function buildStyle() {
+  return [
+    {
+      selector: 'node',
+      style: {
+        'background-color': (ele) => KIND_COLORS[ele.data('kind')] || '#5a4a3e',
+        'background-opacity': 0.95,
+        'label': 'data(label)',
+        // 根据节点背景亮度自动选字色:暗底用白字,亮底用深字
+        'color': (ele) => {
+          const bg = KIND_COLORS[ele.data('kind')] || '#5a4a3e';
+          const hex = bg.replace('#', '');
+          const r = parseInt(hex.substring(0,2),16);
+          const g = parseInt(hex.substring(2,4),16);
+          const b = parseInt(hex.substring(4,6),16);
+          const lum = (0.299*r + 0.587*g + 0.114*b) / 255;
+          return lum > 0.55 ? '#1f1f1e' : '#ffffff';
+        },
+        'font-family': 'Source Serif Pro, Noto Serif SC, serif',
+        'font-size': 11.5,
+        'font-weight': 600,
+        'text-valign': 'center',
+        'text-halign': 'center',
+        'text-wrap': 'wrap',
+        'text-max-width': '110px',
+        'shape': (ele) => KIND_SHAPES[ele.data('kind')] || 'round-rectangle',
+        'width': (ele) => {
+          const k = ele.data('kind');
+          if (k === 'goal' || k === 'concept') return 125;
+          if (k === 'method') return 105;
+          if (k === 'metric' || k === 'anchor') return 88;
+          if (k === 'code') return 135;
+          if (k === 'action') return 100;
+          if (k === 'state') return 130;
+          if (k === 'subcap') return 110;
+          return 80;
+        },
+        'height': (ele) => {
+          const k = ele.data('kind');
+          if (k === 'goal' || k === 'concept' || k === 'state' || k === 'code') return 52;
+          if (k === 'method' || k === 'subcap') return 46;
+          if (k === 'action') return 34;
+          if (k === 'rule') return 30;
+          if (k === 'metric' || k === 'anchor') return 52;
+          return 38;
+        },
+        'border-width': 1.5,
+        'border-color': '#faf9f5',
+        'border-opacity': 0.9,
+        'text-margin-y': 0,
+        'text-outline-color': (ele) => {
+          // 加细字描边,白底深字也有微衬底
+          const bg = KIND_COLORS[ele.data('kind')] || '#5a4a3e';
+          const hex = bg.replace('#', '');
+          const r = parseInt(hex.substring(0,2),16);
+          const g = parseInt(hex.substring(2,4),16);
+          const b = parseInt(hex.substring(4,6),16);
+          const lum = (0.299*r + 0.587*g + 0.114*b) / 255;
+          return lum > 0.55 ? '#ffffff' : '#000000';
+        },
+        'text-outline-width': 0.3,
+        'text-outline-opacity': 0.15
+      }
+    },
+    {
+      selector: 'edge',
+      style: {
+        'width': 1.2,
+        'line-color': '#c5beac',
+        'target-arrow-color': '#c5beac',
+        'target-arrow-shape': 'triangle',
+        'curve-style': 'bezier',
+        'opacity': 0.55
+      }
+    },
+    {
+      selector: 'node:selected',
+      style: {
+        'border-width': 3,
+        'border-color': '#d97757',
+        'background-blacken': -0.08
+      }
+    },
+    {
+      selector: '.filtered-out',
+      style: { 'opacity': 0.08, 'events': 'no', 'text-opacity': 0.1 }
+    }
+  ];
+}
+
+let cy = null;
+let currentTab = 't1';
+let currentFilter = new Set();
+
+function renderTab(tabId) {
+  currentTab = tabId;
+  const meta = TAB_META[tabId];
+  document.getElementById('metaPills').innerHTML = `
+    <span class="pill"><span class="k">Tab</span> ${meta.name}</span>
+    <span class="pill"><span class="k">节点</span> ${meta.count}</span>
+    <span class="pill"><span class="k">边</span> ${meta.edges}</span>
+    <span class="pill"><span class="k">布局</span> 思维导图</span>
+  `;
+  if (cy) { cy.destroy(); cy = null; }
+  const elems = buildElements(tabId);
+  cy = cytoscape({
+    container: document.getElementById('cy'),
+    elements: [...elems.nodes, ...elems.edges],
+    style: buildStyle(),
+    layout: { name: 'preset', fit: true, padding: 50 },
+    minZoom: 0.2,
+    maxZoom: 3,
+    wheelSensitivity: 0.2
+  });
+  cy.on('tap', 'node', evt => showDrawer(evt.target.data()));
+  cy.on('tap', evt => { if (evt.target === cy) closeDrawer(); });
+  buildFilter(tabId);
+}
+
+function buildFilter(tabId) {
+  const nodes = tabId === 't1' ? T1_NODES : tabId === 't2' ? T2_NODES
+              : tabId === 't3' ? T3_NODES : T4_NODES;
+  const kinds = [...new Set(nodes.map(n => n.kind))];
+  document.getElementById('filterList').innerHTML = kinds.map(k => `
+    <label class="filter-item">
+      <input type="checkbox" checked data-kind="${k}">
+      <span class="swatch" style="background:${KIND_COLORS[k] || '#4a4a4a'}"></span>
+      <span>${KIND_LABELS[k] || k}</span>
+    </label>
+  `).join('');
+  currentFilter = new Set(kinds);
+  document.querySelectorAll('#filterList input').forEach(inp => {
+    inp.addEventListener('change', () => {
+      const k = inp.dataset.kind;
+      if (inp.checked) currentFilter.add(k); else currentFilter.delete(k);
+      cy.nodes().forEach(n => {
+        if (currentFilter.has(n.data('kind'))) n.removeClass('filtered-out');
+        else n.addClass('filtered-out');
+      });
+    });
+  });
+}
+
+function showDrawer(n) {
+  const tags = [];
+  if (n.layer) tags.push(n.layer);
+  if (n.kind) tags.push(KIND_LABELS[n.kind] || n.kind);
+  if (n.metric) tags.push('指标: ' + n.metric);
+  if (n.t !== undefined) tags.push('t = ' + n.t + ' 分钟');
+  document.getElementById('drawerContent').innerHTML = `
+    <div class="kind-tag">${KIND_LABELS[n.kind] || n.kind}${n.layer ? ' · ' + n.layer : ''}</div>
+    <h2>${n.label}</h2>
+    <div class="role">${n.quote || n.metric || ''}</div>
+    <div class="section-label">描述</div>
+    <p>${n.desc || '—'}</p>
+    ${n.quote ? `<div class="quote">"${n.quote}"</div>` : ''}
+    ${n.metric ? `<div class="section-label">可测指标</div><p>${n.metric}</p>` : ''}
+    <div class="section-label">引用</div>
+    <div class="ref">${n.ref || '—'}</div>
+    <div class="section-label">标签</div>
+    <div class="tags">${tags.map(t => `<span class="tag">${t}</span>`).join('')}</div>
+  `;
+  document.getElementById('drawer').classList.add('open');
+}
+
+function closeDrawer() {
+  document.getElementById('drawer').classList.remove('open');
+}
+
+document.querySelectorAll('.tab').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderTab(btn.dataset.tab);
+  });
+});
+
+renderTab('t1');
+</script>
+</body>
+</html>
