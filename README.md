@@ -1,61 +1,62 @@
-# Make Your LLM Ship Interactive HTML, Not Static Markdown
+# Karpathy Was Right: Make Your LLM Ship Interactive HTML, Not Markdown Walls
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
-[![Stars](https://img.shields.io/github/stars/xiangbianpangde/llm-html-graph?style=social)](#)
-[![Forks](https://img.shields.io/github/forks/xiangbianpangde/llm-html-graph?style=social)](#)
+[![Stars](https://img.shields.io/github/stars/xiangbianpangde/karpathy-html-graph?style=social)](#)
+[![Forks](https://img.shields.io/github/forks/xiangbianpangde/karpathy-html-graph?style=social)](#)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](./CONTRIBUTING.md)
 [![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)](./CHANGELOG.md)
 
-> A widely shared idea in the LLM world: an LLM's output should be
-> **interactive HTML the user can click, zoom, and filter** — not a
-> 50-page markdown wall you have to scroll.
+> **"An LLM should be able to ship an HTML file with a working interactive
+> UI, not just hand you a markdown wall you have to scroll."**
 >
-> This repo is that idea, in production form. One HTML file, 4 tabs,
-> 100+ nodes, fully offline. Plus the recipe (`teach-trace.md`) so any
-> LLM can generate one for your own project.
+> — the idea behind this repo, paraphrased from Karpathy's public statements
+> on LLM artifact formats.
+
+> **TL;DR for the impatient:** Your LLM hands you 4,000 words of markdown
+> when you asked for a graph. This is the open-source fix. Single HTML file,
+> 4 tabs, 100+ nodes, fully offline. **Double-click to open. That's it.**
+> ⭐ below and the repo is yours.
 
 ---
 
-## TL;DR
+## Why This Exists
 
-A **single self-contained HTML file** (`48h-learning-graph.html`, ~54 KB)
-that turns a complex teaching-system design — 4 core modules, 3 layers
-of abstraction, 48 hours of cognitive journey — into a clickable,
-zoomable, fully offline knowledge graph. **Double-click to open. No
-server, no build, no CDN, no markdown.** The repo also ships the
-`teach-trace` skill spec that teaches any LLM to generate this style of
-graph for any project you throw at it.
+Karpathy has said it more than once: an LLM's output should be a **living,
+interactive HTML page** — not a 50-page `.md` you have to scroll, not a
+screenshot you can't click, not a Jupyter notebook that needs a kernel.
 
----
+Most LLM artifacts today still fail this test:
 
-## The Problem
-
-Complex systems don't survive being written down as markdown:
-
-- 🪦 **Markdown kills structure.** A 50-page `.md` doc flattens
-  hierarchies and cross-references into walls of text. You lose the map.
+- 🪦 **Markdown kills structure.** A long `.md` flattens hierarchies and
+  cross-references into walls of text. You lose the map.
 - 🔗 **References rot.** "`M-009 → M-010 → M-011`" is a sentence. It's
   not a graph. You can't click it, you can't zoom it.
 - 🐢 **Static ≠ interactive.** A teaching design with 6 strategies,
   33 cognitive states, and 38 system actions should *be* a graph. Not
   a paragraph.
-- 🌐 **CDN-first is a trap.** Pretty graph tools that require a build
-  step or load JS from a CDN break offline, behind firewalls, and 5
-  years from now when the URL dies.
-- 🤖 **LLMs default to markdown.** When you ask an LLM to "explain
-  this architecture," it gives you 4,000 words of prose. You wanted
-  pixels.
+- 🌐 **CDN-first is a trap.** Pretty graph tools that need a build step
+  or load JS from a CDN break offline, behind firewalls, and 5 years
+  from now when the URL dies.
+- 🤖 **LLMs default to markdown.** Ask an LLM to "explain this
+  architecture" and you get prose. You wanted pixels.
 
-## The Solution
+**This repo is the artifact Karpathy asked for** — a working example of
+what an LLM's output looks like when it ships HTML, plus the recipe
+(`teach-trace.md`) that teaches any LLM to make one for your project.
 
-This repo ships the **HTML artifact** and the **recipe** that makes it:
+## What You Get
+
+A **single self-contained HTML file** (`48h-learning-graph.html`,
+~54 KB) that turns a complex teaching-system design — 4 core modules,
+3 layers of abstraction, 48 hours of cognitive journey — into a
+**clickable, zoomable, fully offline knowledge graph**.
 
 - 🖱️ **Click any node, see its details.** Drawer shows the kind, label,
   role, key quote, and a real `file:line` reference.
 - 🔍 **Zoom, pan, filter by type.** Four pre-laid-out tabs (mind-map,
   pentagon, 3-column, timeline) — never scattered.
 - 📦 **One file, fully offline.** `cytoscape.min.js` is bundled
-  locally. No CDN, no build, no server. Double-click `48h-learning-graph.html`.
+  locally. No CDN, no build, no server.
 - 🎨 **Claude / Anthropic warm palette.** Cream background, terracotta
   accent, 5 shades of warm brown hierarchy. Auto-contrast text — white
   on dark, dark on light. Luminance threshold 0.55.
@@ -79,8 +80,7 @@ Safari 15+). ES6 support is the only constraint.
 
 **Want to teach your LLM to make one?** Drop
 [`teach-trace.md`](./teach-trace.md) into your LLM's skill folder and
-ask it to graph one of your own projects. See the *How It Works*
-section below.
+ask it to graph one of your own projects.
 
 ## How It Works
 
@@ -121,7 +121,7 @@ section below.
 | **Skill spec** | Tells the LLM *how* to graph a project | `teach-trace.md` |
 | **Style recipes** | Palette, typography, node colors | `docs/references/default-style.md` |
 | **Tab schemas** | Node/edge shape per tab + layout patterns | `docs/references/tab-schemas.md` |
-| **Deliverable** | The actual graph | `48h-learning-graph.html` |
+| **Deliverable** | The actual graph (the thing Karpathy asked for) | `48h-learning-graph.html` |
 | **Runtime** | Renders the graph, fully offline | `cytoscape.min.js` |
 
 ## Use Cases
@@ -190,12 +190,12 @@ consortium).
 
 ## ⭐ Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=xiangbianpangde/llm-html-graph&type=Date)](https://star-history.com/#xiangbianpangde/llm-html-graph&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=xiangbianpangde/karpathy-html-graph&type=Date)](https://star-history.com/#xiangbianpangde/karpathy-html-graph&Date)
 
 ---
 
 <p align="center">
-  Made for every team whose LLM keeps handing them 4,000 words of prose<br>
-  when what they really wanted was a graph.<br>
-  <sub>If this made a complex system click for you, drop a ⭐ — it funds more recipes like this.</sub>
+  Built for the moment Karpathy said "LLMs should ship HTML, not markdown" —<br>
+  and we actually shipped one.<br>
+  <sub>Drop a ⭐ and tag <a href="https://twitter.com/karpathy">@karpathy</a> if you want him to see it.</sub>
 </p>
