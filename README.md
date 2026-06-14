@@ -6,11 +6,17 @@
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](./CONTRIBUTING.md)
 [![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)](./CHANGELOG.md)
 
-> **"An LLM should be able to ship an HTML file with a working interactive
-> UI, not just hand you a markdown wall you have to scroll."**
+### ▶︎ [**Try it live** — no install, opens in your browser](https://xiangbianpangde.github.io/karpathy-html-graph/)
+
+> **What Andrej Karpathy actually said (May 2026):** the format of LLM
+> output is evolving `plain text → Markdown → HTML → interactive neural
+> video`, and HTML is *"early but forming a new good default."*
+> Markdown is a report; HTML is an interface.
+> ([press coverage](https://eu.36kr.com/en/p/3805777601519112))
 >
-> — the idea behind this repo, paraphrased from Karpathy's public statements
-> on LLM artifact formats.
+> **This repo is what that looks like in practice** — a real LLM artifact
+> shipped as a clickable, zoomable HTML knowledge graph instead of a
+> markdown wall you have to scroll.
 
 > **TL;DR for the impatient:** Your LLM hands you 4,000 words of markdown
 > when you asked for a graph. This is the open-source fix. Single HTML file,
